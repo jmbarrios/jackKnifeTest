@@ -47,6 +47,7 @@ obsState <- sp1 %>% select(state) %>% unlist(., use.names = TRUE)
 obsStat <- zStat(obsState, probs)
 
 p_value <- results %>% filter(D >= obsStat[1]) %>% summarise_at('pD', sum)
+success_rate <- sum(obsState)/length(obsState)
 
 ## Analisis specie 2
 I <- iterpc::iterpc(table(c(0, 1)), nrow(sp2), ordered = TRUE, replace = TRUE)
@@ -66,6 +67,7 @@ obsState <- sp2 %>% select(state) %>% unlist(., use.names = TRUE)
 obsStat <- zStat(obsState, probs)
 
 p_value <- results %>% filter(D >= obsStat[1]) %>% summarise_at('pD', sum)
+success_rate <- sum(obsState)/length(obsState)
 
 ## Analisis specie 3
 I <- iterpc::iterpc(table(c(0, 1)), nrow(sp3), ordered = TRUE, replace = TRUE)
@@ -85,3 +87,4 @@ obsState <- sp3 %>% select(state) %>% unlist(., use.names = TRUE)
 obsStat <- zStat(obsState, probs)
 
 p_value <- results %>% filter(D >= obsStat[1]) %>% summarise_at('pD', sum)
+success_rate <- sum(obsState)/length(obsState)
