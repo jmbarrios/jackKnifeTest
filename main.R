@@ -20,7 +20,8 @@ sp.models <- ENMeval::ENMevaluate(occs, env, bg.df, RMvalues = c(1),
 
 resultsData <- sp.models@results
 resultsData %<>% select(settings, contains('ORmin_'), contains('ProbMin'))
-probs <- resultsData %>% select(contains('ProbMin')) %>% unlist(., use.names=TRUE)
+probs <- resultsData %>% select(contains('ProbMin')) %>% unlist(., use.names = TRUE)
+obsState <- resultsData %>% select(contains('ORmin_')) %>% unlist(., use.names = TRUE)
 
 zProb <- function(state, probs) {
   success <- probs^state
@@ -39,16 +40,19 @@ zStat <- function(state, probs) {
   return(r)
 }
 
-I <- iterpc(table(c(0, 1)), 3, ordered = TRUE, replace = TRUE)
+I <- iterpc(table(c(0, 1)), nrow(occs), ordered = TRUE, replace = TRUE)
 no_perm <- getlength(I)
 results <- data.frame(D = double(), pD = double())
 
 for (i in 1:no_perm) {
   s <- getnext(I)
-  z_statistic <- zStat(s, u)
+  z_statistic <- zStat(s, probs)
   
   results <- rbind(results, z_statistic)
 }
 names(results) <- c('D', 'pD')
 
-results %>% filter(D >= 1.5) %>% summarise_at('pD', sum)
+obsStat <- zStat(obsState, probs)
+
+
+results %>% filter(D >= obsStat[1]) %>% summarise_at('pD', sum)
